@@ -3,7 +3,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 import gsap from "gsap";
-import gate from "../gate.jpg";
+import gate from "../images/gate.jpg";
 import "../style.css";
 
 const sizes = {
