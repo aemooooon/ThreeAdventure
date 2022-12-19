@@ -46,7 +46,9 @@ const planeMat = new THREE.MeshPhongMaterial({
     side: THREE.DoubleSide,
 });
 const mesh = new THREE.Mesh(planeGeo, planeMat);
-mesh.rotation.x = Math.PI * -0.5;
+const r = Math.PI * -0.5;
+console.log(r);
+mesh.rotation.x = r;
 scene.add(mesh);
 
 {
@@ -82,14 +84,53 @@ class ColorGUIHelper {
     }
 }
 
+// 环境光
+// const color = 0xffffff;
+// const intensity = 1;
+// const light = new THREE.AmbientLight(color, intensity);
+// scene.add(light);
+
+// 半球光
+// const skyColor = 0xb2e1ff;
+// const groundColor = 0xb97a20;
+// const intensity = 1;
+// const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
+// scene.add(light);
+
+// 平行光
 const color = 0xffffff;
 const intensity = 1;
-const light = new THREE.AmbientLight(color, intensity);
+const light = new THREE.PointLight(color, intensity);
+light.position.set(0, 10, 0);
+// light.target.position.set(-5, 0, 0);
 scene.add(light);
+// scene.add(light.target);
+
+const helper = new THREE.PointLightHelper(light);
+scene.add(helper);
+
+function makeXYZGUI(gui, vector3, name, onChangeFn) {
+    const folder = gui.addFolder(name);
+    folder.add(vector3, "x", -10, 10).onChange(onChangeFn);
+    folder.add(vector3, "y", 0, 10).onChange(onChangeFn);
+    folder.add(vector3, "z", -10, 10).onChange(onChangeFn);
+    folder.open();
+}
+
+function updateLight() {
+    // light.target.updateMatrixWorld();
+    helper.update();
+}
+updateLight();
 
 const gui = new dat.GUI();
-gui.addColor(new ColorGUIHelper(light, "color"), "value").name("color");
-gui.add(light, "intensity", 0, 2, 0.01);
+gui.addColor(new ColorGUIHelper(light, "color"), "value").name("颜色");
+// gui.addColor(new ColorGUIHelper(light, "color"), "value").name("skyColor");
+// gui.addColor(new ColorGUIHelper(light, "groundColor"), "value").name("groundColor");
+gui.add(light, "intensity", 0, 2, 0.01).name("强度");
+
+makeXYZGUI(gui, light.position, "position", updateLight);
+// makeXYZGUI(gui, light.target.position, "target", updateLight);
 
 renderer.render(scene, camera);
 
